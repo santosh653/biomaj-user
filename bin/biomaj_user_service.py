@@ -80,7 +80,7 @@ def create_user(user):
     if not user.user:
         user.create(password=param['password'],email=param['email'])
     del user.user['_id']
-    del user.user['hashed_password']        
+    del user.user['hashed_password']
     return jsonify({'user': user.user, 'password': param['password']})
 
 @app.route('/api/bind/user/<user>', methods=['POST'])
@@ -104,6 +104,13 @@ def bind_user(user):
     del user.user['_id']
     del user.user['hashed_password']
     return jsonify({'user': user.user})
+
+@app.route('/api/info/apikey/<apikey>', methods=['GET'])
+def get_user_by_apikey(apikey):
+    user = BmajUser.get_user_by_apikey(apikey)
+    del user['_id']
+    del user['hashed_password']    
+    return jsonify({'user': user})
 
 if __name__ == "__main__":
     start_server(config)

@@ -1,2 +1,2 @@
 include *.txt *.md
-recursive-include biomaj_core *.txt
+recursive-include biomaj_user *.txt

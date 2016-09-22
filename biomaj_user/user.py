@@ -29,6 +29,10 @@ class BmajUser(object):
         BmajUser.banks = BmajUser.db.banks
         BmajUser.users = BmajUser.db.users
 
+    @staticmethod
+    def get_user_by_apikey(apikey):
+        return BmajUser.users.find_one({'apikey': apikey})
+
     def __init__(self, user):
         self.id = user
         self.user = BmajUser.users.find_one({'id': user})
