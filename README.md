@@ -2,6 +2,10 @@
 
 Biomaj user management library
 
+# Status
+
+development
+
 # Web server
 
 In bin directory:
