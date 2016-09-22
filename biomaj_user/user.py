@@ -7,7 +7,6 @@ import string
 
 from pymongo import MongoClient
 
-from biomaj_core.config import BiomajConfig
 
 class BmajUser(object):
     """
@@ -41,8 +40,7 @@ class BmajUser(object):
         con = None
         if not self.user and BmajUser.config['ldap']['host']:
             # Check if in ldap
-            #import ldap
-            from ldap3 import Server, Connection, AUTH_SIMPLE, STRATEGY_SYNC, STRATEGY_ASYNC_THREADED, SEARCH_SCOPE_WHOLE_SUBTREE, GET_ALL_INFO
+            from ldap3 import Server, Connection, STRATEGY_SYNC, SEARCH_SCOPE_WHOLE_SUBTREE, GET_ALL_INFO
             try:
                 ldap_host = BmajUser.config['ldap']['host']
                 ldap_port = BmajUser.config['ldap']['port']
@@ -55,27 +53,22 @@ class BmajUser(object):
             base_dn = 'ou=People,' + ldap_dn
             ldapfilter = "(&(|(uid=" + user + ")(mail=" + user + ")))"
             try:
-                #con.simple_bind_s()
                 attrs = ['mail']
-                #results = con.search_s(base_dn, ldap.SCOPE_SUBTREE, filter, attrs)
                 con.search(base_dn, ldapfilter, SEARCH_SCOPE_WHOLE_SUBTREE, attributes=attrs)
                 if con.response:
                     ldapMail = None
-                    #for dn, entry in results:
                     for r in con.response:
-                        user_dn = str(r['dn'])
-                        #if 'mail' not in entry:
+                        # user_dn = str(r['dn'])
                         if 'mail' not in r['attributes']:
-                            logging.error('Mail not set for user '+user)
+                            logging.error('Mail not set for user ' + user)
                         else:
-                            #ldapMail = entry['mail'][0]
                             ldapMail = r['attributes']['mail'][0]
                     self.user = {
-                                  'id' : user,
-                                  'email': ldapMail,
-                                  'is_ldap': True,
-                                  'apikey': ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))
-                                }
+                        'id': user,
+                        'email': ldapMail,
+                        'is_ldap': True,
+                        'apikey': ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))
+                    }
                     self.user['_id'] = self.users.insert(self.user)
 
                 else:
@@ -121,19 +114,14 @@ class BmajUser(object):
             return False
 
         if self.user['is_ldap']:
-            #import ldap
             con = None
             ldap_server = None
-            #try:
-            #    ldap_host = BiomajConfig.global_config.get('GENERAL','ldap.host')
-            #    ldap_port = BiomajConfig.global_config.get('GENERAL','ldap.port')
-            #    con = ldap.initialize('ldap://' + ldap_host + ':' + str(ldap_port))
-            from ldap3 import Server, Connection, AUTH_SIMPLE, STRATEGY_SYNC, STRATEGY_ASYNC_THREADED, SEARCH_SCOPE_WHOLE_SUBTREE, GET_ALL_INFO
+
+            from ldap3 import Server, Connection, AUTH_SIMPLE, STRATEGY_SYNC, SEARCH_SCOPE_WHOLE_SUBTREE, GET_ALL_INFO
             from ldap3.core.exceptions import LDAPBindError
             try:
                 ldap_host = BmajUser.config['ldap']['host']
                 ldap_port = BmajUser.config['ldap']['port']
-                #con = ldap.initialize('ldap://' + ldap_host + ':' + str(ldap_port))
                 ldap_server = Server(ldap_host, port=ldap_port, get_info=GET_ALL_INFO)
                 con = Connection(ldap_server, auto_bind=True, client_strategy=STRATEGY_SYNC, check_names=True)
             except Exception as err:
@@ -146,13 +134,12 @@ class BmajUser(object):
             try:
                 attrs = ['mail']
                 con.search(base_dn, ldapfilter, SEARCH_SCOPE_WHOLE_SUBTREE, attributes=attrs)
-                #results = con.search_s(base_dn, ldap.SCOPE_SUBTREE, filter, attrs)
                 user_dn = None
-                ldapMail = None
-                ldapHomeDirectory = None
+                # ldapMail = None
+                # ldapHomeDirectory = None
                 for r in con.response:
                     user_dn = str(r['dn'])
-                    ldapMail = r['attributes']['mail'][0]
+                    # ldapMail = r['attributes']['mail'][0]
 
                 con.unbind()
                 con = Connection(ldap_server, auto_bind=True, read_only=True, client_strategy=STRATEGY_SYNC, user=user_dn, password=password, authentication=AUTH_SIMPLE, check_names=True)
@@ -161,10 +148,10 @@ class BmajUser(object):
                 if user_dn:
                     return True
             except LDAPBindError as err:
-                logging.error('Bind error: '+str(err))
+                logging.error('Bind error: ' + str(err))
                 return False
             except Exception as err:
-                logging.error('Bind error: '+str(err))
+                logging.error('Bind error: ' + str(err))
                 return False
 
         else:
@@ -187,12 +174,12 @@ class BmajUser(object):
         hashed = bcrypt.hashpw(password, bcrypt.gensalt())
         if self.user is None:
             self.user = {
-                          'id' : self.id,
-                          'hashed_password': hashed,
-                          'email': email,
-                          'is_ldap': False,
-                          'apikey': ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))
-                        }
+                'id': self.id,
+                'hashed_password': hashed,
+                'email': email,
+                'is_ldap': False,
+                'apikey': ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))
+            }
             self.user['_id'] = BmajUser.users.insert(self.user)
 
     def renew_apikey(self):

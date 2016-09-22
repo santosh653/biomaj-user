@@ -1,15 +1,11 @@
 import ssl
 import os
-import threading
-import logging
 import random
 import string
 import yaml
 from flask import Flask
 from flask import jsonify
-from flask import g
 from flask import request
-from flask import Response
 from flask import abort
 import consul
 
@@ -38,10 +34,10 @@ def start_server(config):
         consul_agent = consul.Consult(host=config['consul']['host'])
         consul_agent.agent.service.register('biomaj_user', service_id=config['consul']['id'], port=config['web']['port'], tags=['biomaj'])
         check = consul.Check.http(url=config['web']['local_endpoint'], interval=20)
-        consul_agent.agent.check.register(name + '_check', check=check, service_id=config['consul']['id'])
-
+        consul_agent.agent.check.register(config['consul']['id'] + '_check', check=check, service_id=config['consul']['id'])
 
     app.run(host='0.0.0.0', port=config['web']['port'], ssl_context=context, threaded=True, debug=config['web']['debug'])
+
 
 @app.route('/api/info/user', methods=['GET'])
 def list_users():
@@ -53,6 +49,7 @@ def list_users():
         del user['_id']
         del user['hashed_password']
     return jsonify({'users': users})
+
 
 @app.route('/api/info/user/<user>', methods=['GET'])
 def get_user(user):
@@ -66,6 +63,7 @@ def get_user(user):
     del user.user['hashed_password']
     return jsonify({'user': user.user})
 
+
 @app.route('/api/info/user/<user>', methods=['POST'])
 def create_user(user):
     '''
@@ -78,10 +76,11 @@ def create_user(user):
     if 'email' not in param:
         param['email'] = None
     if not user.user:
-        user.create(password=param['password'],email=param['email'])
+        user.create(password=param['password'], email=param['email'])
     del user.user['_id']
     del user.user['hashed_password']
     return jsonify({'user': user.user, 'password': param['password']})
+
 
 @app.route('/api/bind/user/<user>', methods=['POST'])
 def bind_user(user):
@@ -105,12 +104,14 @@ def bind_user(user):
     del user.user['hashed_password']
     return jsonify({'user': user.user})
 
+
 @app.route('/api/info/apikey/<apikey>', methods=['GET'])
 def get_user_by_apikey(apikey):
     user = BmajUser.get_user_by_apikey(apikey)
     del user['_id']
-    del user['hashed_password']    
+    del user['hashed_password']
     return jsonify({'user': user})
+
 
 if __name__ == "__main__":
     start_server(config)
