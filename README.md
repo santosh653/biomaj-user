@@ -8,7 +8,6 @@ development
 
 # Web server
 
-In bin directory:
 
     export BIOMAJ_CONFIG=path_to_config.yml
     gunicorn biomaj_user.biomaj_user_service:app

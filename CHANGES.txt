@@ -1,2 +1,4 @@
+3.0.1:
+  move biomaj_user_service.py to package
 3.0.0:
   separation of biomaj and biomaj_user
