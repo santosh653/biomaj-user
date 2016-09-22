@@ -54,7 +54,7 @@ config = {
                          ],
     'packages': find_packages(),
     'include_package_data': True,
-    'scripts': ['bin/biomaj_user_service.py'],
+    'scripts': [],
     'name': 'biomaj_user'
 }
 
