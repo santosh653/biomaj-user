@@ -5,7 +5,7 @@ python:
   - "3.4"
   - "3.5"
 services:
-  - redis
+  - mongodb
 # Apply only on main branches
 branches:
   except:
@@ -20,6 +20,9 @@ install:
   - "pip install python-coveralls"
   - "python setup.py -q install"
 #  - "echo data_file=$TRAVIS_BUILD_DIR/.coverage >> .coveragerc"
+before_script:
+  - sleep 10
+
 # command to run tests
 script:
    - nosetests
