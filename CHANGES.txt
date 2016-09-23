@@ -1,3 +1,5 @@
+3.0.2:
+  add scripts to add/remove a user
 3.0.1:
   move biomaj_user_service.py to package
 3.0.0:
