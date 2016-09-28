@@ -38,9 +38,11 @@ def start_server(config):
 
     app.run(host='0.0.0.0', port=config['web']['port'], ssl_context=context, threaded=True, debug=config['web']['debug'])
 
+
 @app.route('/api/user', methods=['GET'])
 def ping():
     return jsonify({'msg': 'pong'})
+
 
 @app.route('/api/user/info/user', methods=['GET'])
 def list_users():
