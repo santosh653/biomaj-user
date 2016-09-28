@@ -31,15 +31,18 @@ def start_server(config):
         context.load_cert_chain(config['tls']['cert'], config['tls']['key'])
 
     if config['consul']['host']:
-        consul_agent = consul.Consult(host=config['consul']['host'])
+        consul_agent = consul.Consul(host=config['consul']['host'])
         consul_agent.agent.service.register('biomaj_user', service_id=config['consul']['id'], port=config['web']['port'], tags=['biomaj'])
-        check = consul.Check.http(url=config['web']['local_endpoint'], interval=20)
+        check = consul.Check.http(url=config['web']['local_endpoint'] + '/api/user', interval=20)
         consul_agent.agent.check.register(config['consul']['id'] + '_check', check=check, service_id=config['consul']['id'])
 
     app.run(host='0.0.0.0', port=config['web']['port'], ssl_context=context, threaded=True, debug=config['web']['debug'])
 
+@app.route('/api/user', methods=['GET'])
+def ping():
+    return jsonify({'msg': 'pong'})
 
-@app.route('/api/info/user', methods=['GET'])
+@app.route('/api/user/info/user', methods=['GET'])
 def list_users():
     '''
     Check if listing request is over
@@ -51,7 +54,7 @@ def list_users():
     return jsonify({'users': users})
 
 
-@app.route('/api/info/user/<user>', methods=['GET'])
+@app.route('/api/user/info/user/<user>', methods=['GET'])
 def get_user(user):
     '''
     Check if listing request is over
@@ -64,7 +67,7 @@ def get_user(user):
     return jsonify({'user': user.user})
 
 
-@app.route('/api/info/user/<user>', methods=['POST'])
+@app.route('/api/user/info/user/<user>', methods=['POST'])
 def create_user(user):
     '''
     Check if listing request is over
@@ -82,7 +85,7 @@ def create_user(user):
     return jsonify({'user': user.user, 'password': param['password']})
 
 
-@app.route('/api/bind/user/<user>', methods=['POST'])
+@app.route('/api/user/bind/user/<user>', methods=['POST'])
 def bind_user(user):
     '''
     Bind a user with his password or API Key. Post parameters dict:
@@ -105,7 +108,7 @@ def bind_user(user):
     return jsonify({'user': user.user})
 
 
-@app.route('/api/info/apikey/<apikey>', methods=['GET'])
+@app.route('/api/user/info/apikey/<apikey>', methods=['GET'])
 def get_user_by_apikey(apikey):
     user = BmajUser.get_user_by_apikey(apikey)
     del user['_id']
