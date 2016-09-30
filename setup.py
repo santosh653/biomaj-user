@@ -43,15 +43,16 @@ config = {
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4'
     ],
-    'install_requires': ['nose',
-                         'mock',
+    'install_requires': [
                          'ldap3',
                          'pymongo',
                          'py-bcrypt',
                          'flask',
                          'python-consul',
                          'biomaj_core'
-                         ],
+                        ],
+    'tests_require': ['nose', 'mock'],
+    'test_suite': 'nose.collector',
     'packages': find_packages(),
     'include_package_data': True,
     'scripts': ['bin/biomaj_create_user.py', 'bin/biomaj_remove_user.py'],
