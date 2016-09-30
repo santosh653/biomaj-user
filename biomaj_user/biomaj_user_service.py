@@ -47,7 +47,7 @@ def ping():
 @app.route('/api/user/info/user', methods=['GET'])
 def list_users():
     '''
-    Check if listing request is over
+    List users
     '''
     users = BmajUser.list()
     for user in users:
@@ -59,7 +59,7 @@ def list_users():
 @app.route('/api/user/info/user/<user>', methods=['GET'])
 def get_user(user):
     '''
-    Check if listing request is over
+    Get user info
     '''
     user = BmajUser(user)
     if not user.user:
@@ -72,7 +72,7 @@ def get_user(user):
 @app.route('/api/user/info/user/<user>', methods=['POST'])
 def create_user(user):
     '''
-    Check if listing request is over
+    Create a user
     '''
     user = BmajUser(user)
     param = request.get_json()
@@ -112,6 +112,9 @@ def bind_user(user):
 
 @app.route('/api/user/info/apikey/<apikey>', methods=['GET'])
 def get_user_by_apikey(apikey):
+    '''
+    Get a user from his api key
+    '''
     user = BmajUser.get_user_by_apikey(apikey)
     del user['_id']
     del user['hashed_password']
