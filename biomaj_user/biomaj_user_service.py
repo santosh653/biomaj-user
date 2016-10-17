@@ -123,5 +123,5 @@ def get_user_by_apikey(apikey):
     return jsonify({'user': user})
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" or __name__ == "biomaj_user.biomaj_user_service":
     start_server(config)

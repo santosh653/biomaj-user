@@ -20,7 +20,7 @@ with open(config_file, 'r') as ymlfile:
 BmajUser.set_config(config)
 
 if len(sys.argv) == 1:
-    print("USer id is missing in arguments")
+    print("User id is missing in arguments")
 
 user = BmajUser(sys.argv[1])
 if user.user is None:
