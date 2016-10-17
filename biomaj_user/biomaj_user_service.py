@@ -33,6 +33,7 @@ def consul_declare(config):
         check = consul.Check.http(url=config['web']['hostname'] + '/api/user', interval=20)
         consul_agent.agent.check.register(config['consul']['id'] + '_check', check=check, service_id=config['consul']['id'])
 
+consul_declare(config)
 
 @app.route('/api/user', methods=['GET'])
 def ping():
@@ -117,7 +118,6 @@ def get_user_by_apikey(apikey):
 
 
 if __name__ == "__main__":
-    consul_declare(config)
     context = None
     if config['tls']['cert']:
         context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
