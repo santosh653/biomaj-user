@@ -26,19 +26,12 @@ BmajUser.set_config(config)
 app = Flask(__name__)
 
 
-def start_server(config):
-    context = None
-    if config['tls']['cert']:
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        context.load_cert_chain(config['tls']['cert'], config['tls']['key'])
-
+def consul_declare(config):
     if config['consul']['host']:
         consul_agent = consul.Consul(host=config['consul']['host'])
         consul_agent.agent.service.register('biomaj_user', service_id=config['consul']['id'], port=config['web']['port'], tags=['biomaj'])
         check = consul.Check.http(url=config['web']['hostname'] + '/api/user', interval=20)
         consul_agent.agent.check.register(config['consul']['id'] + '_check', check=check, service_id=config['consul']['id'])
-
-    app.run(host='0.0.0.0', port=config['web']['port'], ssl_context=context, threaded=True, debug=config['web']['debug'])
 
 
 @app.route('/api/user', methods=['GET'])
@@ -123,5 +116,10 @@ def get_user_by_apikey(apikey):
     return jsonify({'user': user})
 
 
-if __name__ == "__main__" or __name__ == "biomaj_user.biomaj_user_service":
-    start_server(config)
+if __name__ == "__main__":
+    consul_declare(config)
+    context = None
+    if config['tls']['cert']:
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        context.load_cert_chain(config['tls']['cert'], config['tls']['key'])
+    app.run(host='0.0.0.0', port=config['web']['port'], ssl_context=context, threaded=True, debug=config['web']['debug'])
