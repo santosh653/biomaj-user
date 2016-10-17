@@ -33,7 +33,9 @@ def consul_declare(config):
         check = consul.Check.http(url=config['web']['hostname'] + '/api/user', interval=20)
         consul_agent.agent.check.register(config['consul']['id'] + '_check', check=check, service_id=config['consul']['id'])
 
+
 consul_declare(config)
+
 
 @app.route('/api/user', methods=['GET'])
 def ping():
