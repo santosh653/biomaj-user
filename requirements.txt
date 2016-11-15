@@ -1,6 +1,6 @@
 nose
 mock
-ldap3
+ldap3==1.4.0
 pymongo
 py-bcrypt
 flask
