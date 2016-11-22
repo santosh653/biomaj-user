@@ -44,7 +44,7 @@ config = {
         'Programming Language :: Python :: 3.4'
     ],
     'install_requires': [
-                         'ldap3',
+                         'ldap3==1.4.0',
                          'pymongo',
                          'py-bcrypt',
                          'flask',
