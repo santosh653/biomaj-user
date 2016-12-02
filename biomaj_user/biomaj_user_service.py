@@ -10,6 +10,7 @@ from flask import abort
 import consul
 
 from biomaj_user.user import BmajUser
+from biomaj_core.utils import Utils
 
 config_file = 'config.yml'
 if 'BIOMAJ_CONFIG' in os.environ:
@@ -18,25 +19,22 @@ if 'BIOMAJ_CONFIG' in os.environ:
 config = None
 with open(config_file, 'r') as ymlfile:
     config = yaml.load(ymlfile)
+    Utils.service_config_override(config)
 
 BmajUser.set_config(config)
 
 app = Flask(__name__)
 
 
-def start_server(config):
-    context = None
-    if config['tls']['cert']:
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        context.load_cert_chain(config['tls']['cert'], config['tls']['key'])
-
+def consul_declare(config):
     if config['consul']['host']:
         consul_agent = consul.Consul(host=config['consul']['host'])
-        consul_agent.agent.service.register('biomaj_user', service_id=config['consul']['id'], port=config['web']['port'], tags=['biomaj'])
-        check = consul.Check.http(url=config['web']['local_endpoint'] + '/api/user', interval=20)
+        consul_agent.agent.service.register('biomaj-user', service_id=config['consul']['id'], address=config['web']['hostname'], port=config['web']['port'], tags=['biomaj'])
+        check = consul.Check.http(url='http://' + config['web']['hostname'] + ':' + str(config['web']['port']) + '/api/user', interval=20)
         consul_agent.agent.check.register(config['consul']['id'] + '_check', check=check, service_id=config['consul']['id'])
 
-    app.run(host='0.0.0.0', port=config['web']['port'], ssl_context=context, threaded=True, debug=config['web']['debug'])
+
+consul_declare(config)
 
 
 @app.route('/api/user', methods=['GET'])
@@ -47,7 +45,7 @@ def ping():
 @app.route('/api/user/info/user', methods=['GET'])
 def list_users():
     '''
-    Check if listing request is over
+    List users
     '''
     users = BmajUser.list()
     for user in users:
@@ -59,7 +57,7 @@ def list_users():
 @app.route('/api/user/info/user/<user>', methods=['GET'])
 def get_user(user):
     '''
-    Check if listing request is over
+    Get user info
     '''
     user = BmajUser(user)
     if not user.user:
@@ -72,7 +70,7 @@ def get_user(user):
 @app.route('/api/user/info/user/<user>', methods=['POST'])
 def create_user(user):
     '''
-    Check if listing request is over
+    Create a user
     '''
     user = BmajUser(user)
     param = request.get_json()
@@ -112,6 +110,9 @@ def bind_user(user):
 
 @app.route('/api/user/info/apikey/<apikey>', methods=['GET'])
 def get_user_by_apikey(apikey):
+    '''
+    Get a user from his api key
+    '''
     user = BmajUser.get_user_by_apikey(apikey)
     del user['_id']
     del user['hashed_password']
@@ -119,4 +120,8 @@ def get_user_by_apikey(apikey):
 
 
 if __name__ == "__main__":
-    start_server(config)
+    context = None
+    if config['tls']['cert']:
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        context.load_cert_chain(config['tls']['cert'], config['tls']['key'])
+    app.run(host='0.0.0.0', port=config['web']['port'], ssl_context=context, threaded=True, debug=config['web']['debug'])

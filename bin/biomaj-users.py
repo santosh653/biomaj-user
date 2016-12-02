@@ -9,8 +9,10 @@ import sys
 import bcrypt
 from tabulate import tabulate
 from biomaj_user.user import BmajUser
-
+from biomaj_core.utils import Utils
 SUPPORTED_ACTIONS = ['add', 'create', 'delete', 'remove', 'rm', 'renew', 'update', 'view']
+
+
 def main():
     """This is the main function treating arguments passed on the command line."""
     description = "BioMAJ user: Manager users."
@@ -29,7 +31,6 @@ def main():
     parser.add_argument('-P', '--password', dest="passwd", metavar="<password>", type=str,
                         help="User password to use when creating new user. If not given, automatically generated")
     parser.parse_args(namespace=options)
-
     if not len(sys.argv) > 1:
         parser.print_help()
         sys.exit(1)
@@ -45,6 +46,7 @@ def main():
         config = 'config.yml'
     with open(config, 'r') as ymlfile:
         config = yaml.load(ymlfile)
+        Utils.service_config_override(config)
 
     BmajUser.set_config(config)
     user = BmajUser(options.user)

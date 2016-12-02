@@ -43,9 +43,8 @@ config = {
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4'
     ],
-    'install_requires': ['nose',
-                         'mock',
-                         'ldap3',
+    'install_requires': [
+                         'ldap3==1.4.0',
                          'pymongo',
                          'py-bcrypt',
                          'flask',
@@ -53,7 +52,9 @@ config = {
                          'tabulate',
                          'python-consul',
                          'biomaj_core'
-                         ],
+                        ],
+    'tests_require': ['nose', 'mock'],
+    'test_suite': 'nose.collector',
     'packages': find_packages(),
     'include_package_data': True,
     'scripts': ['bin/biomaj-user.py'],
