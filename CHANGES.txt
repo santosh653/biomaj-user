@@ -1,3 +1,5 @@
+3.0.3:
+  move biomaj_create_user and biomaj_delete_user to biomaj_users script with cmd line options
 3.0.2:
   add scripts to add/remove a user
 3.0.1:

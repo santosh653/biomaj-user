@@ -1,4 +1,3 @@
-from __future__ import print_function
 import argparse
 from argparse import Namespace as options
 import os
@@ -29,7 +28,7 @@ def main():
     parser.add_argument('-U', '--user', dest="user", metavar='<username>', type=str,
                         required=True, help="User name to manage")
     parser.add_argument('-P', '--password', dest="passwd", metavar="<password>", type=str,
-                        help="User password to use when creating new user. If not given, automatically generated")
+                        help="User password to use when creating new user. If not given, automatically generated, accepts env variable BIOMAJ_USER_PASSWORD env variable")
     parser.parse_args(namespace=options)
     if not len(sys.argv) > 1:
         parser.print_help()
@@ -53,7 +52,10 @@ def main():
     if options.action in ['add', 'create']:
         if user.user is None:
             if options.passwd is None:
-                options.passwd = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits)
+                if 'BIOMAJ_USER_PASSWORD' in os.environ:
+                    options.passwd = os.environ['BIOMAJ_USER_PASSWORD']
+                else:
+                    options.passwd = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits)
                                          for _ in range(10))
             user.create(options.passwd, email=options.email)
             print("User successfully created")
