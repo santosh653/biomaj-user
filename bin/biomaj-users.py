@@ -64,21 +64,23 @@ def main():
             sys.exit(1)
 
     if user.user is None:
-        print("User %s does not exist" % str(options.user))
+        print("[%s] User %s does not exist" % (str(options.action), str(options.user)))
         sys.exit(1)
 
     if options.action in ['delete', 'remove', 'rm']:
         user.remove()
         print("User %s successfully deleted" % user.user['id'])
     if options.action == 'update':
-        update = {'id': user}
+        update = {}
         if options.passwd:
-            update['hashed_password'] = bcrypt.hashpw(options.password, user.user['hashed_password'])
+            update['hashed_password'] = bcrypt.hashpw(options.passwd, user.user['hashed_password'])
         if options.email:
             update['email'] = options.email
-        BmajUser.users.update({'id': options.user},
-                              {'$set': update })
-        print("User %s successfully updated" % str(user.user['id']))
+        if update.items():
+            BmajUser.users.update({'id': user.user['id']}, {'$set': update})
+            print("User %s successfully updated" % str(user.user['id']))
+        else:
+            print("[%s] User %s not updated" % (str(options.action), str(options.user)))
     if options.action == 'renew':
         user.renew_apikey()
     if options.action == 'view':
