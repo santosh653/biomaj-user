@@ -57,7 +57,7 @@ config = {
     'test_suite': 'nose.collector',
     'packages': find_packages(),
     'include_package_data': True,
-    'scripts': ['bin/biomaj-user.py'],
+    'scripts': ['bin/biomaj-users.py'],
     'name': 'biomaj_user'
 }
 
