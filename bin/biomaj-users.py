@@ -83,6 +83,9 @@ def main():
             print("[%s] User %s not updated" % (str(options.action), str(options.user)))
     if options.action == 'renew':
         user.renew_apikey()
+        user = BmajUser(user.user['id'])
+        print("[%s] User %s, successfully renewed API key: '%s'" %
+              (str(options.action), str(user.user['id']), str(user.user['apikey'])))
     if options.action == 'view':
         print(tabulate([["User", "Email", "API Key", "LDAP"],
                         [str(user.user['id']), str(user.user['email']),
