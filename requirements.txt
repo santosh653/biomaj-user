@@ -7,4 +7,4 @@ py-bcrypt
 flask
 python-consul
 tabulate
-yaml
+PyYAML
