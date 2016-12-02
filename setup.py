@@ -48,7 +48,7 @@ config = {
                          'pymongo',
                          'py-bcrypt',
                          'flask',
-			 'yaml',
+			 'PyYAML',
                          'tabulate',
                          'python-consul',
                          'biomaj_core'
