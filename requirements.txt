@@ -1,3 +1,4 @@
+biomaj_core
 nose
 mock
 ldap3
@@ -5,4 +6,5 @@ pymongo
 py-bcrypt
 flask
 python-consul
-biomaj_core
+tabulate
+yaml
