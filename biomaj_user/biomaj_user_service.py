@@ -114,8 +114,10 @@ def get_user_by_apikey(apikey):
     Get a user from his api key
     '''
     user = BmajUser.get_user_by_apikey(apikey)
-    del user['_id']
-    del user['hashed_password']
+    if user:
+        del user['_id']
+        if 'hashed_password' in user:
+            del user['hashed_password']
     return jsonify({'user': user})
 
 
