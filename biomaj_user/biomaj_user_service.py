@@ -100,7 +100,7 @@ def bind_user(user):
     if params['type'] == 'password':
         check = user.check_password(params['value'])
     else:
-        check = user.check_api_key(params['value'])
+        check = user.check_apikey(params['value'])
     if not check:
         abort(401)
     del user.user['_id']

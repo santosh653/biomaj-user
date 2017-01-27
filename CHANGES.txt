@@ -1,3 +1,5 @@
+3.0.4:
+  fix api key checks via API
 3.0.3:
   move biomaj_create_user and biomaj_delete_user to biomaj_users script with cmd line options
 3.0.2:
