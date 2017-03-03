@@ -63,7 +63,8 @@ def get_user(user):
     if not user.user:
         abort(404)
     del user.user['_id']
-    del user.user['hashed_password']
+    if 'hashed_password' in user.user:
+        del user.user['hashed_password']
     return jsonify({'user': user.user})
 
 
@@ -81,7 +82,8 @@ def create_user(user):
     if not user.user:
         user.create(password=param['password'], email=param['email'])
     del user.user['_id']
-    del user.user['hashed_password']
+    if 'hashed_password' in user.user:
+        del user.user['hashed_password']
     return jsonify({'user': user.user, 'password': param['password']})
 
 
@@ -104,7 +106,8 @@ def bind_user(user):
     if not check:
         abort(401)
     del user.user['_id']
-    del user.user['hashed_password']
+    if 'hashed_password' in user.user:
+        del user.user['hashed_password']
     return jsonify({'user': user.user})
 
 
