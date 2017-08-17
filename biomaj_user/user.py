@@ -40,12 +40,12 @@ class BmajUser(object):
         con = None
         if not self.user and BmajUser.config['ldap']['host']:
             # Check if in ldap
-            from ldap3 import Server, Connection, STRATEGY_SYNC, SEARCH_SCOPE_WHOLE_SUBTREE, GET_ALL_INFO
+            from ldap3 import Server, Connection, SYNC, SUBTREE, ALL
             try:
                 ldap_host = BmajUser.config['ldap']['host']
                 ldap_port = BmajUser.config['ldap']['port']
-                ldap_server = Server(ldap_host, port=ldap_port, get_info=GET_ALL_INFO)
-                con = Connection(ldap_server, auto_bind=True, client_strategy=STRATEGY_SYNC, check_names=True)
+                ldap_server = Server(ldap_host, port=ldap_port, get_info=ALL)
+                con = Connection(ldap_server, auto_bind=True, client_strategy=SYNC, check_names=True)
             except Exception as err:
                 logging.error(str(err))
                 self.user = None
@@ -54,7 +54,7 @@ class BmajUser(object):
             ldapfilter = "(&(|(uid=" + user + ")(mail=" + user + ")))"
             try:
                 attrs = ['mail']
-                con.search(base_dn, ldapfilter, SEARCH_SCOPE_WHOLE_SUBTREE, attributes=attrs)
+                con.search(base_dn, ldapfilter, SUBTREE, attributes=attrs)
                 if con.response:
                     ldapMail = None
                     for r in con.response:
@@ -117,13 +117,13 @@ class BmajUser(object):
             con = None
             ldap_server = None
 
-            from ldap3 import Server, Connection, AUTH_SIMPLE, STRATEGY_SYNC, SEARCH_SCOPE_WHOLE_SUBTREE, GET_ALL_INFO
+            from ldap3 import Server, Connection, SIMPLE, SYNC, SUBTREE, ALL
             from ldap3.core.exceptions import LDAPBindError
             try:
                 ldap_host = BmajUser.config['ldap']['host']
                 ldap_port = BmajUser.config['ldap']['port']
-                ldap_server = Server(ldap_host, port=ldap_port, get_info=GET_ALL_INFO)
-                con = Connection(ldap_server, auto_bind=True, client_strategy=STRATEGY_SYNC, check_names=True)
+                ldap_server = Server(ldap_host, port=ldap_port, get_info=ALL)
+                con = Connection(ldap_server, auto_bind=True, client_strategy=SYNC, check_names=True)
             except Exception as err:
                 logging.error(str(err))
                 return False
@@ -133,7 +133,7 @@ class BmajUser(object):
 
             try:
                 attrs = ['mail']
-                con.search(base_dn, ldapfilter, SEARCH_SCOPE_WHOLE_SUBTREE, attributes=attrs)
+                con.search(base_dn, ldapfilter, SUBTREE, attributes=attrs)
                 user_dn = None
                 # ldapMail = None
                 # ldapHomeDirectory = None
@@ -142,7 +142,7 @@ class BmajUser(object):
                     # ldapMail = r['attributes']['mail'][0]
 
                 con.unbind()
-                con = Connection(ldap_server, auto_bind=True, read_only=True, client_strategy=STRATEGY_SYNC, user=user_dn, password=password, authentication=AUTH_SIMPLE, check_names=True)
+                con = Connection(ldap_server, auto_bind=True, read_only=True, client_strategy=SYNC, user=user_dn, password=password, authentication=SIMPLE, check_names=True)
                 con.unbind()
 
                 if user_dn:

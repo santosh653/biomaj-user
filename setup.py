@@ -21,7 +21,7 @@ config = {
     'url': 'http://biomaj.genouest.org',
     'download_url': 'http://biomaj.genouest.org',
     'author_email': 'olivier.sallou@irisa.fr',
-    'version': '3.0.5',
+    'version': '3.0.6',
      'classifiers': [
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -44,11 +44,11 @@ config = {
         'Programming Language :: Python :: 3.4'
     ],
     'install_requires': [
-                         'ldap3==1.4.0',
+                         'ldap3>=2.2.4',
                          'pymongo',
                          'py-bcrypt',
                          'flask',
-			 'PyYAML',
+                         'PyYAML',
                          'tabulate',
                          'python-consul',
                          'biomaj_core'
