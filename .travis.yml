@@ -1,33 +1,32 @@
 language: python
 sudo: false
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
+- '2.7'
+- '3.4'
+- '3.5'
+- '3.6'
 services:
-  - mongodb
-# Apply only on main branches
+- mongodb
 branches:
   except:
-    - /^feature.*$/
-# command to install dependencies
-#before_install:
-#  - "sudo apt-get update -qq"
-#  - "sudo apt-get install -qq libldap2-dev libsasl2-dev"
+  - "/^feature.*$/"
 install:
-  - "pip install flake8"
-  - "pip install -r requirements.txt"
-  - "pip install coverage"
-  - "pip install python-coveralls"
-  - "python setup.py -q install"
-#  - "echo data_file=$TRAVIS_BUILD_DIR/.coverage >> .coveragerc"
+- pip install flake8
+- pip install -r requirements.txt
+- pip install coverage
+- pip install python-coveralls
+- python setup.py -q install
 before_script:
-  - sleep 10
-
-# command to run tests
+- sleep 10
 script:
-   - python setup.py test
-   - flake8 --ignore E501 biomaj_user/*.py
-#after_success:
-#  - coveralls
-
+- python setup.py test
+- flake8 --ignore E501 biomaj_user/*.py
+deploy:
+  provider: pypi
+  skip_existing: true
+  user: osallou
+  password:
+    secure: LKJMO4pp5ZL7LG0xgQsmFLkO9OU6erAoAbVT2Bm6Q21cA1IhT8WivtfEMkatnMATLGQ+a5uCNcNTutLScFXsGavJFUEROKEZ2mrldMs2CMSemzp6txR2XuCuJibz5Q6wxp8A0l1r1y7R+VyJSMVRioRNQ8pb5C19aazEN36Uziuqquwky/R8jFpv7PnwYu8USgalgzeJd7GQdKKVktMJFOE+2EiMwZnlTly6urom1oVXPxk3pb6Ns8p1Wx1fay4p61zCLROSnQAAcKR+saJOCQS9W1yJV0IMrFptzwg4fX6/Q9ukZqOrKJ6a2LmfbwzQ57xl5lGv9/FLff9SWHFgm96pnBhJcoL2PGdRph1zijB8ZZeBJblwEIyRGl7unc5QrV/bjjBWSJiwaysOBnu6l5k1sUNwRW0c5VbkWniw6/q+nJidj5qcaRbJouTDAs4638+HFkMKo8SzzYqCpdCMbUerdvD10bf4uNAEwP5vY0yIyZ+Vbchyk/ZqCurivCK/xQ1bo7HzkG5CWzPyxl01ee+0ZIog148dhoQqXtvsCwjHgtMBgpjU17KqYNbI3EPtqytwV3dRPnlJxrlGMBk/t9ohUEZg71csbgIyfIX0EOO1qD4BocpWXDs3y5mNhHnA7GW5lobFBhx/Qyj3bB12EyzFYzK9157EwxKgo+iQ8PM=
+  distributions: sdist bdist_wheel
+  on:
+    tags: true

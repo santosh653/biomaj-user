@@ -14,7 +14,7 @@ from biomaj_core.utils import Utils
 
 config_file = 'config.yml'
 if 'BIOMAJ_CONFIG' in os.environ:
-        config_file = os.environ['BIOMAJ_CONFIG']
+    config_file = os.environ['BIOMAJ_CONFIG']
 
 config = None
 with open(config_file, 'r') as ymlfile:
@@ -29,7 +29,19 @@ app = Flask(__name__)
 def consul_declare(config):
     if config['consul']['host']:
         consul_agent = consul.Consul(host=config['consul']['host'])
-        consul_agent.agent.service.register('biomaj-user', service_id=config['consul']['id'], address=config['web']['hostname'], port=config['web']['port'], tags=['biomaj'])
+        consul_agent.agent.service.register(
+            'biomaj-user',
+            service_id=config['consul']['id'],
+            address=config['web']['hostname'],
+            port=config['web']['port'],
+            tags=[
+                'biomaj',
+                'api',
+                'traefik.backend=biomaj-user',
+                'traefik.frontend.rule=PathPrefix:/api/user',
+                'traefik.enable=true'
+            ]
+        )
         check = consul.Check.http(url='http://' + config['web']['hostname'] + ':' + str(config['web']['port']) + '/api/user', interval=20)
         consul_agent.agent.check.register(config['consul']['id'] + '_check', check=check, service_id=config['consul']['id'])
 

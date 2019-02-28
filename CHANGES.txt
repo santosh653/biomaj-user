@@ -1,3 +1,5 @@
+3.0.7:
+  Add tags for traefik support
 3.0.6:
   update ldap3 requirement version to use more recent release
 3.0.5:
