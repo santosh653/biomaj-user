@@ -6,6 +6,7 @@ import yaml
 import string
 import sys
 import bcrypt
+import json
 from tabulate import tabulate
 from biomaj_user.user import BmajUser
 from biomaj_core.utils import Utils
@@ -21,6 +22,7 @@ def main():
                         help="Action to perform for user " + str(SUPPORTED_ACTIONS) +
                              "'renew': Create new api key",
                         required=True)
+    parser.add_argument('-J', '--json', dest="json", help="output to json", action='store_true')
     parser.add_argument('-C', '--config', dest="config", metavar='</path/to/config.yml>', type=str,
                         help="Path to config.yml. By default read from env variable BIOMAJ_CONFIG")
     parser.add_argument('-E', '--email', dest="email", type=str,
@@ -58,6 +60,10 @@ def main():
                     options.passwd = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits)
                                          for _ in range(10))
             user.create(options.passwd, email=options.email)
+            if options.json:
+                del user.user['_id']
+                print(json.dumps(user.user))
+                sys.exit(0)
             print("User successfully created")
             print(tabulate([["User", "Password", "API Key"],
                             [user.user['id'], str(options.passwd), str(user.user['apikey'])]],
