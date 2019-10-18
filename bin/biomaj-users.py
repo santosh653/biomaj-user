@@ -46,7 +46,7 @@ def main():
     else:
         config = 'config.yml'
     with open(config, 'r') as ymlfile:
-        config = yaml.load(ymlfile)
+        config = yaml.load(ymlfile, Loader=yaml.FullLoader)
         Utils.service_config_override(config)
 
     BmajUser.set_config(config)

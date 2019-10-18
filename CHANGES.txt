@@ -1,3 +1,5 @@
+3.0.10:
+  Force yaml loader to skip warning on output
 3.0.9:
   Add json output to biomaj_user script
 3.0.8:
